@@ -15,32 +15,7 @@ export default class LoginScreen extends React.Component
             password:'',
         }
     }
-    login=async(emailId, password)=>{
-        if(emailId && password)
-        {
-            try{
-                const response=await firebase.auth().signInWithEmailAndPassword(emailId, password)
-                console.log(response)
-                console.log(emailId)
-                if(emailId==='abc@example.com')
-                {
-                    this.props.navigation.navigate(Read);
-                    
-                }
-            }
-            catch(error)
-            {
-                console.log(error.code)
-                switch(error.code)
-                {
-                    case 'auth/user-not-found':Alert.alert('user Not found!!')
-                    break;
-                    case 'auth/wrong-password':Alert.alert('Incorrect password!!')
-                    break;
-                }
-            }
-        }
-    }
+   
     render()
     {
         return(
@@ -71,12 +46,19 @@ export default class LoginScreen extends React.Component
                </View>
                <View>
                    <TouchableOpacity style={{height:30,width:90,borderWidth:1,marginTop:20,paddingTop:5,borderRadius:7}}
-                   onPress={()=>
-                    {
-                    this.login(this.state.emailId,this.state.password)
-                    
-                    
-                    }}
+                  onPress = {async()=>{
+                    var email  = await this.state.emailId;
+                    var password = await this.state.password
+                    firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then(()=>{
+                      this.props.navigation.navigate('Write')
+                    })
+                    .catch((error)=> {
+                      var errorCode = error.code;
+                      var errorMessage = error.message;
+                      return this.showAlert(errorCode)
+                    })
+                  }}
                    >
                        <Text style={{textAlign:'center'}}>
                         Login
